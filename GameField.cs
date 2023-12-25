@@ -34,7 +34,7 @@ namespace BackGammon
 
         private FillGameField GetFigureByPosition(uint[] figurePosition)
         {
-            return this._gameField[figurePosition[0], figurePosition[1]];
+              return this._gameField[figurePosition[0], figurePosition[1]];
         }
 
         private bool CheckPlayerAccessFigure(uint[] figurePosition)
@@ -55,7 +55,8 @@ namespace BackGammon
 
             if (figurePosition[0] < _COUNT_ROWS - 1)
             {
-                directionMovement = new uint[2] { figurePosition[0] + 1, figurePosition[1] };
+                directionMovement = new uint[2] { figurePosition[0] + 1, figurePosition[1] };               
+                
             }
             else
             {
@@ -107,7 +108,13 @@ namespace BackGammon
 
             return true;
         }
-
+        /*!
+        *  @brief Calculate the movement of the figure by one position.
+        *  @param [in] startFigurePosition The position of the selected figure in {x, y} format.
+        *  Value of a random number for a move
+        *  @return Returns the position of one shape in the format.
+        *  The position of the figure is in the format {x, y}, where x is a row and y is a column.
+        */
         private uint[]? СalculateFigureMovementOnePosition(uint[] figurePosition, uint cubeValue)
         {
             // самая итоговая позиция, куда мы можем походить
@@ -171,7 +178,7 @@ namespace BackGammon
                 uint newRow = 0;
                 // назначаем новую строку
                 // если наша новая позиция сверху->вниз
-                if (this.GetFigureDirectionMovement(figureNewFirstPosition))
+                if (this.GetFigureDirectionMovement(figurePosition))
                 {
                     for (uint i = 1; i < _COUNT_ROWS; i++)
                     {
@@ -286,8 +293,8 @@ namespace BackGammon
 
             do
             {
-                this._firstRandomCubeValue = 1;
-                this._secondRandomCubeValue = 5;
+                this._firstRandomCubeValue = Convert.ToUInt32(random.Next(1, 7)); ;
+                this._secondRandomCubeValue = Convert.ToUInt32(random.Next(1, 7)); ;
 
                 if (this._firstRandomCubeValue > this._secondRandomCubeValue)
                 {
