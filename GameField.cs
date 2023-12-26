@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Documents;
 
 namespace BackGammon
 {
@@ -49,19 +50,44 @@ namespace BackGammon
         }
 
         // True is UP, true is figure start index = 0; false = figure start index is COUNT_ROWS - 1
+
+        /*!
+        * @brief Determines the position of the piece at the top or bottom of the playing field.
+        * @param [in] Any figure that requires position determination in {x, y} format.
+        * Where x is a row and y is a column in the game board.
+        * @return True is UP; False is DOWN.
+         */
         private bool GetFigureDirectionMovement(uint[] figurePosition)
         {
             uint[] directionMovement = null;
-
+            uint i = 0;
+            /*
+            * @if The figure is not in the last line: _COUNT_ROWS - 1
+            * directionMovement line: + 1.
+            * @endif directionMovement remains in the same position as figurePosition
+            */
             if (figurePosition[0] < _COUNT_ROWS - 1)
             {
                 directionMovement = new uint[2] { figurePosition[0] + 1, figurePosition[1] };
+                /*
+                * @if the row is 0 and the column has more than one figure
+                * Assign a row to the last figure in the column.
+                * Used in relation to figureNewFirstPosition                
+                */
+                if (this.GetFigureByPosition(directionMovement) != FillGameField.Empty && figurePosition[0] == 0)
+                {
+                    while (this.GetFigureByPosition(directionMovement) != FillGameField.Empty)
+                    {
+                        i++;
+                        directionMovement = new uint[2] { figurePosition[0] + i, figurePosition[1] };
+                    }
+                }
             }
             else
             {
                 directionMovement = new uint[2] { figurePosition[0], figurePosition[1] };
             }
-
+            
             if (this.GetFigureByPosition(directionMovement) == FillGameField.Empty)
             {
                 return true;
@@ -73,7 +99,7 @@ namespace BackGammon
         private bool CheckFigureIsBlocked(uint[] figurePosition)
         {
             // TODO: Понять где верх
-            bool startFigureIsUp = this.GetFigureDirectionMovement(figurePosition);
+             bool startFigureIsUp = this.GetFigureDirectionMovement(figurePosition);
 
             // TODO: Обработать out of range
             uint[] figureUpPosition = null;
@@ -272,7 +298,7 @@ namespace BackGammon
         {
             return this._gameField;
         }
-        
+
         // Получить значение кубиков
         public uint[] GetRandomCubes()
         {
