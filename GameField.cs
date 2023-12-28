@@ -106,8 +106,13 @@ namespace BackGammon
             }
             return true;
         }
+
         /*!
         *  @brief Prohibition On Moving Figure After Returning Home.
+        *  @param  startFigureRow - A variable representing the position of a piece on the board.
+        *  @param  figurePositionColls - A variable representing the position of a shape along a line.
+        *  @param  cubeValue - Variable representing the value of the die
+        *  @return true - Access blocked, false - Access is allowed
         */
         private bool ProhibitionOnMovingFigureAfterReturningHome(uint startFigureRow, uint figurePositionColls, uint cubeValue)
         {
