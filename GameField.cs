@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
 
 namespace BackGammon
 {
@@ -110,18 +109,18 @@ namespace BackGammon
         /*!
         *  @brief Prohibition On Moving Figure After Returning Home.
         */
-        private bool ProhibitionOnMovingFigureAfterReturningHome( uint startFigureRow, uint figurePositionColls, uint cubeValue )
+        private bool ProhibitionOnMovingFigureAfterReturningHome(uint startFigureRow, uint figurePositionColls, uint cubeValue)
         {
-            if( this._whiteFiguresIsWalking )
+            if(this._whiteFiguresIsWalking)
             {
-                if( startFigureRow == 23 && figurePositionColls + cubeValue > _COUNT_COLLS - 1 )
+                if(startFigureRow == 23 && figurePositionColls + cubeValue > _COUNT_COLLS - 1)
                 {
                     return true;
                 }
             }
             else
             {
-                if( startFigureRow == 0 && (int) figurePositionColls - cubeValue < 0 )
+                if(startFigureRow == 0 && (int)figurePositionColls - cubeValue < 0)
                 {
                     return true;
                 }
@@ -140,64 +139,64 @@ namespace BackGammon
             uint startFigureRow = (startFigureIsUp == true) ? (uint)0 : 23;
             // итоговая позиция куда ставить фигуру
             uint[] figureNewFirstPosition = null;
-            if( !ProhibitionOnMovingFigureAfterReturningHome(startFigureRow, figurePosition[1], cubeValue ) )
+            if(!ProhibitionOnMovingFigureAfterReturningHome(startFigureRow, figurePosition[1], cubeValue))
             {
                 // Двигаемся по столбцам влево или вправо (если сверху, то влево. если снизу, то вправо)
-                if( startFigureIsUp )
+                if(startFigureIsUp)
                 {
                     // Вычисляем не пережли ли мы в другую сторону доски
-                    if( ( int ) figurePosition[ 1 ] - cubeValue < 0 )
+                    if((int)figurePosition[1] - cubeValue < 0)
                     {
                         // инверсия строки из-за переноса в другую сторону
-                        uint finishFigureRow = ( startFigureRow == 0 ) ? 23 : ( uint ) 0;
+                        uint finishFigureRow = (startFigureRow == 0) ? 23 : (uint)0;
                         // вычислить сдвиг по столбцам
                         uint finishFigureColl = 0;
-                        if( ( int ) figurePosition[ 1 ] - cubeValue < 0 )
+                        if( (int) figurePosition[1] - cubeValue < 0)
                         {
-                            finishFigureColl = ( uint ) ( ( -( ( int ) figurePosition[ 1 ] - cubeValue ) ) - 1 );
+                            finishFigureColl = (uint)((-((int)figurePosition[1] - cubeValue))- 1);
                         }
                         else
                         {
-                            finishFigureColl = figurePosition[ 1 ] - cubeValue;
+                            finishFigureColl = figurePosition[1] - cubeValue;
                         }
 
-                        figureNewFirstPosition = new uint[ 2 ] { finishFigureRow, finishFigureColl };
+                        figureNewFirstPosition = new uint[2] {finishFigureRow, finishFigureColl};
                     }
                     else
                     {
                         // нет инверсии строки, т.к. нет перехода в другую часть поля
                         // поэтому строка "изначальная" = startFigureRow
-                        figureNewFirstPosition = new uint[ 2 ] { startFigureRow, figurePosition[ 1 ] - cubeValue };
+                        figureNewFirstPosition = new uint[2] {startFigureRow, figurePosition[1] - cubeValue};
                     }
                 }
                 else
                 {
                     // Вычисляем не пережли ли мы в другую сторону доски
-                    if( figurePosition[ 1 ] + cubeValue > _COUNT_COLLS - 1 )
+                    if(figurePosition[1] + cubeValue > _COUNT_COLLS - 1)
                     {
-                        uint finishFigureRow = ( startFigureRow == 0 ) ? 23 : ( uint ) 0;
-                        uint finishFigureColl = _COUNT_COLLS - 1 - ( figurePosition[ 1 ] + cubeValue ) % _COUNT_COLLS;
+                        uint finishFigureRow = (startFigureRow == 0) ? 23 : (uint)0;
+                        uint finishFigureColl = _COUNT_COLLS - 1 - (figurePosition[1] + cubeValue) % _COUNT_COLLS;
 
-                        figureNewFirstPosition = new uint[ 2 ] { finishFigureRow, finishFigureColl };
+                        figureNewFirstPosition = new uint[2] {finishFigureRow, finishFigureColl};
                     }
                     else
                     {
                         // нет инверсии строки, т.к. нет перехода в другую часть поля
                         // поэтому строка "изначальная" = startFigureRow
-                        figureNewFirstPosition = new uint[ 2 ] { startFigureRow, figurePosition[ 1 ] + cubeValue };
+                        figureNewFirstPosition = new uint[2] {startFigureRow, figurePosition[1] + cubeValue};
                     }
                 }
                 // Если цвет одинаковый, то ставь сверху
-                if( this.GetFigureByPosition( figureNewFirstPosition ) == this.GetFigureByPosition( figurePosition ) )
+                if(this.GetFigureByPosition(figureNewFirstPosition) == this.GetFigureByPosition(figurePosition))
                 {
                     uint newRow = 0;
                     // назначаем новую строку
                     // если наша новая позиция сверху->вниз
-                    if( this.GetFigureDirectionMovement( figureNewFirstPosition ) )
+                    if(this.GetFigureDirectionMovement(figureNewFirstPosition))
                     {
-                        for( uint i = 1; i < _COUNT_ROWS; i++ )
+                        for(uint i = 1; i < _COUNT_ROWS; i++)
                         {
-                            if( this.GetFigureByPosition( new uint[ 2 ] { i, figureNewFirstPosition[ 1 ] } ) == FillGameField.Empty )
+                            if(this.GetFigureByPosition(new uint[2] {i, figureNewFirstPosition[1]}) == FillGameField.Empty)
                             {
                                 newRow = i;
                                 break;
@@ -206,9 +205,9 @@ namespace BackGammon
                     }
                     else
                     {
-                        for( uint i = _COUNT_ROWS - 2; i >= 0; i-- )
+                        for(uint i = _COUNT_ROWS - 2; i >= 0; i--)
                         {
-                            if( this.GetFigureByPosition( new uint[ 2 ] { i, figureNewFirstPosition[ 1 ] } ) == FillGameField.Empty )
+                            if(this.GetFigureByPosition(new uint[2] {i, figureNewFirstPosition[1]}) == FillGameField.Empty)
                             {
                                 newRow = i;
                                 break;
@@ -216,9 +215,9 @@ namespace BackGammon
                         }
                     }
 
-                    figureMovementOnePosition = new uint[ 2 ] { newRow, figureNewFirstPosition[ 1 ] };
+                    figureMovementOnePosition = new uint[2] {newRow, figureNewFirstPosition[1]};
                 }
-                else if( this.GetFigureByPosition( figureNewFirstPosition ) == FillGameField.Empty )
+                else if(this.GetFigureByPosition(figureNewFirstPosition) == FillGameField.Empty)
                 {
                     figureMovementOnePosition = figureNewFirstPosition;
                 }
