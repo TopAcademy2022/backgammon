@@ -17,6 +17,9 @@ namespace BackGammon
             WhiteFigure = 1, ///< Field cell fill white figure
             BlackFigure = 2 ///< Field cell fill black figure
         }
+
+        private const uint _COUNT_MAX_FIGURES = 15;
+
         private uint _countDeletedWhiteFigure; //удаленные белые
 
         private uint _countDeletedBlackFigure; //удаленные черные
@@ -37,12 +40,8 @@ namespace BackGammon
         
         private bool ChecEndGame()
         {
-            const uint numberWhiteFigure = 15;
-
-            const uint numberBlackFigure = 15;
-
             // убрать магическое число 15 на константу
-            if (this._countDeletedWhiteFigure == numberWhiteFigure || this._countDeletedBlackFigure == numberBlackFigure)
+            if (this._countDeletedWhiteFigure == _COUNT_MAX_FIGURES || this._countDeletedBlackFigure == _COUNT_MAX_FIGURES)
             {
                 return true;
             }
@@ -52,7 +51,7 @@ namespace BackGammon
 
         private bool DetermineWhiteVictoryFigure()
         {
-            if (this._countDeletedWhiteFigure == numberWhiteFigure)
+            if (this._countDeletedWhiteFigure == _COUNT_MAX_FIGURES)
             {
                 return true;
             }
