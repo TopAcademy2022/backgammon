@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Documents;
 
 namespace BackGammon
 {
@@ -49,8 +48,6 @@ namespace BackGammon
             return false;
         }
 
-        // True is UP, true is figure start index = 0; false = figure start index is COUNT_ROWS - 1
-
         /*!
         * @brief Determining the position of the piece at the top or bottom of the playing field.
         * @param [in] Any figure that requires position determination in {x, y} format.
@@ -76,7 +73,7 @@ namespace BackGammon
         private bool CheckFigureIsBlocked(uint[] figurePosition)
         {
             // TODO: Понять где верх
-             bool startFigureIsUp = this.GetFigureDirectionMovement(figurePosition);
+            bool startFigureIsUp = this.GetFigureDirectionMovement(figurePosition);
 
             // TODO: Обработать out of range
             uint[] figureUpPosition = null;
