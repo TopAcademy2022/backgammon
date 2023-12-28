@@ -76,26 +76,26 @@ namespace BackGammon
             return false;
         }
 
-        // True is UP, true is figure start index = 0; false = figure start index is COUNT_ROWS - 1
+        /*!
+        * @brief Determining the position of the piece at the top or bottom of the playing field.
+        * @param [in] Any figure that requires position determination in {x, y} format.
+        * Where x is a row and y is a column in the game board.
+        * @return True is UP; False is DOWN .
+         */
         private bool GetFigureDirectionMovement(uint[] figurePosition)
         {
-            uint[] directionMovement = null;
+            uint[] startPositionMovemet = new uint[2] { 0, figurePosition[1] };
 
-            if (figurePosition[0] < _COUNT_ROWS - 1)
+            for (uint i = 0; startPositionMovemet[0] + i < figurePosition[0]; i++)
             {
-                directionMovement = new uint[2] { figurePosition[0] + 1, figurePosition[1] };
-            }
-            else
-            {
-                directionMovement = new uint[2] { figurePosition[0], figurePosition[1] };
-            }
+                startPositionMovemet[0] += i;
 
-            if (this.GetFigureByPosition(directionMovement) == FillGameField.Empty)
-            {
-                return true;
+                if (GetFigureByPosition(startPositionMovemet) == FillGameField.Empty)
+                {
+                    return false;
+                }
             }
-
-            return false;
+            return true;
         }
 
         private bool CheckFigureIsBlocked(uint[] figurePosition)
@@ -326,7 +326,7 @@ namespace BackGammon
         {
             return this._gameField;
         }
-        
+
         // Получить значение кубиков
         public uint[] GetRandomCubes()
         {
