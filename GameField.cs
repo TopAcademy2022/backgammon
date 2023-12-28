@@ -24,10 +24,6 @@ namespace BackGammon
 
         private uint _countDeletedBlackFigure; //удаленные черные
 
-        private uint _firstRandomCubeValue;
-
-        private uint _secondRandomCubeValue;
-
         private const uint _COUNT_COLLS = 12;
 
         private const uint _COUNT_ROWS = 24;
@@ -37,10 +33,11 @@ namespace BackGammon
         private bool _whiteFiguresIsWalking;
 
         private List<uint[]> _figureMovementPositions;
-        
+
+        private List<uint> _randomCubevalues;
+
         private bool ChecEndGame()
         {
-            // убрать магическое число 15 на константу
             if (this._countDeletedWhiteFigure == _COUNT_MAX_FIGURES || this._countDeletedBlackFigure == _COUNT_MAX_FIGURES)
             {
                 return true;
@@ -262,19 +259,9 @@ namespace BackGammon
         {
             List<uint[]?> allFigureMovementPositions = new List<uint[]>();
 
-            // Понимаем сколько вариантов может быть
-            if (this._firstRandomCubeValue != this._secondRandomCubeValue)
+            foreach (uint cubeValue in this._randomCubevalues)
             {
-                allFigureMovementPositions.Add(СalculateFigureMovementOnePosition(figurePosition, this._firstRandomCubeValue));
-                allFigureMovementPositions.Add(СalculateFigureMovementOnePosition(figurePosition, this._secondRandomCubeValue));
-                allFigureMovementPositions.Add(СalculateFigureMovementOnePosition(figurePosition, this._firstRandomCubeValue + this._secondRandomCubeValue));
-            }
-            else ///< если вариантов 4 (значение кубика 1 и 2 равны)
-            {
-                for (uint i = 1; i < 5; i++)
-                {
-                    allFigureMovementPositions.Add(СalculateFigureMovementOnePosition(figurePosition, this._firstRandomCubeValue * i));
-                }
+                allFigureMovementPositions.Add(СalculateFigureMovementOnePosition(figurePosition, cubeValue));
             }
 
             allFigureMovementPositions.RemoveAll(item => item == null);
@@ -328,9 +315,9 @@ namespace BackGammon
         }
 
         // Получить значение кубиков
-        public uint[] GetRandomCubes()
+        public List<uint> GetRandomCubes()
         {
-            return new uint[2] { this._firstRandomCubeValue, this._secondRandomCubeValue };
+            return this._randomCubevalues;
         }
 
         // первый проброс, чтобы найти ходящего
@@ -340,7 +327,7 @@ namespace BackGammon
 
             do
             {
-                this._firstRandomCubeValue = 1;
+                this._firstRandomCubeValue = random.Next(1, 7);
                 this._secondRandomCubeValue = 5;
 
                 if (this._firstRandomCubeValue > this._secondRandomCubeValue)
@@ -357,8 +344,11 @@ namespace BackGammon
         private void UpdateCubes()
         {
             Random random = new Random();
-            this._firstRandomCubeValue = Convert.ToUInt32(random.Next(1, 7));
-            this._secondRandomCubeValue = Convert.ToUInt32(random.Next(1, 7));
+            this._randomCubevalues.Clear();
+
+            this._randomCubevalues.Add(Convert.ToUInt32(random.Next(1, 7)));
+            this._randomCubevalues.Add(Convert.ToUInt32(random.Next(1, 7)));
+            this._randomCubevalues.Add(this._randomCubevalues[0] + this._randomCubevalues[1]);
         }
 
         /*!
