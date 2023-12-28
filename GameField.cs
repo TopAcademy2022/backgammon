@@ -17,6 +17,9 @@ namespace BackGammon
             WhiteFigure = 1, ///< Field cell fill white figure
             BlackFigure = 2 ///< Field cell fill black figure
         }
+        private uint _countDeletedWhiteFigure; //удаленные белые
+
+        private uint _countDeletedBlackFigure; //удаленные черные
 
         private uint _firstRandomCubeValue;
 
@@ -31,6 +34,32 @@ namespace BackGammon
         private bool _whiteFiguresIsWalking;
 
         private List<uint[]> _figureMovementPositions;
+        
+        private bool ChecEndGame()
+        {
+            const uint numberWhiteFigure = 15;
+
+            const uint numberBlackFigure = 15;
+
+            // убрать магическое число 15 на константу
+            if (this._countDeletedWhiteFigure == numberWhiteFigure || this._countDeletedBlackFigure == numberBlackFigure)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool DetermineWhiteVictoryFigure()
+        {
+            if (this._countDeletedWhiteFigure == numberWhiteFigure)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
 
         private FillGameField GetFigureByPosition(uint[] figurePosition)
         {
