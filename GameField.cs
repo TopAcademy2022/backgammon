@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BackGammon
 {
@@ -34,7 +35,7 @@ namespace BackGammon
 
         private List<uint[]> _figureMovementPositions;
 
-        private List<uint> _randomCubevalues;
+        private Dice _dice;
 
         private bool ChecEndGame()
         {
@@ -259,7 +260,7 @@ namespace BackGammon
         {
             List<uint[]?> allFigureMovementPositions = new List<uint[]>();
 
-            foreach (uint cubeValue in this._randomCubevalues)
+            foreach (uint cubeValue in this._dice.RandomCubeValues)
             {
                 allFigureMovementPositions.Add(СalculateFigureMovementOnePosition(figurePosition, cubeValue));
             }
@@ -286,9 +287,10 @@ namespace BackGammon
         {
             const uint COUNT_FIGURES = 15;
 
-            this._whiteFiguresIsWalking = this.DefineWalkingWhiteFigure();
             this._gameField = new FillGameField[_COUNT_ROWS, _COUNT_COLLS];
             this._figureMovementPositions = new List<uint[]>();
+            this._dice = new Dice();
+            this._whiteFiguresIsWalking = this.DefineWalkingWhiteFigure();
 
             for (uint i = 0; i < _COUNT_ROWS; i++)
             {
@@ -317,38 +319,28 @@ namespace BackGammon
         // Получить значение кубиков
         public List<uint> GetRandomCubes()
         {
-            return this._randomCubevalues;
+            return this._dice.RandomCubeValues;
         }
 
         // первый проброс, чтобы найти ходящего
         private bool DefineWalkingWhiteFigure()
         {
             Random random = new Random();
-
+            uint firstRandomCube = 0;
+            uint secondRandomCube = 0;
             do
             {
-                this._firstRandomCubeValue = random.Next(1, 7);
-                this._secondRandomCubeValue = 5;
+                firstRandomCube = Convert.ToUInt32(random.Next(1, 7));
+                secondRandomCube = Convert.ToUInt32(random.Next(1, 7));
 
-                if (this._firstRandomCubeValue > this._secondRandomCubeValue)
+                if (firstRandomCube > secondRandomCube)
                 {
                     return true;
                 }
             }
-            while (this._firstRandomCubeValue == this._secondRandomCubeValue);
+            while (firstRandomCube == secondRandomCube);
 
             return false;
-        }
-
-        // Перебросить кубики
-        private void UpdateCubes()
-        {
-            Random random = new Random();
-            this._randomCubevalues.Clear();
-
-            this._randomCubevalues.Add(Convert.ToUInt32(random.Next(1, 7)));
-            this._randomCubevalues.Add(Convert.ToUInt32(random.Next(1, 7)));
-            this._randomCubevalues.Add(this._randomCubevalues[0] + this._randomCubevalues[1]);
         }
 
         /*!
@@ -359,6 +351,12 @@ namespace BackGammon
         */
         public bool CheckFigureWasMovement(uint[] figurePosition)
         {
+            // убрать в обновление кубиков по нажатию клавиши
+            // автоматически смени игрока если нет хода хоть на одной фишке
+            //if (!CheckExistMovement())
+            //{
+            //    SwitchUser();
+            //}
             if (this.CheckPlayerAccessFigure(figurePosition)) ///< Проверяем, может ли текущий пользователь двигать фигуру
             {
                 if (!this.CheckFigureIsBlocked(figurePosition)) ///< Проверяем, не заблокирована ли фигура
@@ -389,6 +387,49 @@ namespace BackGammon
             return this._figureMovementPositions;
         }
 
+        private void DeleteCubeValueByFinishFigurePosition(uint[] startFigurePosition, uint[] finishFigurePosition)
+        {
+            uint a = 6;
+            bool startFigureIsUp = this.GetFigureDirectionMovement(startFigurePosition);
+
+            if (startFigureIsUp)
+            {
+                a = startFigurePosition[1] - finishFigurePosition[1];
+            }
+            else
+            {
+                a = finishFigurePosition[1] - startFigurePosition[1];
+            }
+
+            if (this._dice.IsDoubleDice)
+            {
+                int countDeletedLastElements = this._dice.RandomCubeValues.IndexOf(a);
+                for (int i = 0; i <= countDeletedLastElements; i++)
+                {
+                    this._dice.RandomCubeValues.Remove(this._dice.RandomCubeValues.Last());
+                }
+            }
+            else
+            {
+                if (this._dice.RandomCubeValues.Count == 1)
+                {
+                    this._dice.RandomCubeValues.Clear();
+                }
+                else
+                {
+                    if (this._dice.RandomCubeValues.Last() == a)
+                    {
+                        this._dice.RandomCubeValues.Clear();
+                    }
+                    else
+                    {
+                        this._dice.RandomCubeValues.Remove(a);
+                        this._dice.RandomCubeValues.Remove(this._dice.RandomCubeValues.Last());
+                    }
+                }
+            }
+        }
+
         public bool MoveFigureToPosition(uint[] startFigurePosition, uint[] finishFigurePosition)
         {
             if (this.ContainsFigureMovementPosition(finishFigurePosition))
@@ -397,10 +438,18 @@ namespace BackGammon
                 this._gameField[finishFigurePosition[0], finishFigurePosition[1]] = this._gameField[startFigurePosition[0], startFigurePosition[1]];
                 // обнуляем стартовую
                 this._gameField[startFigurePosition[0], startFigurePosition[1]] = FillGameField.Empty;
-                // ходит другой игрок
-                this._whiteFiguresIsWalking = !this._whiteFiguresIsWalking;
-                // перебрасываем кубики
-                this.UpdateCubes();
+                // обнуляем ход
+                this.DeleteCubeValueByFinishFigurePosition(startFigurePosition, finishFigurePosition);
+
+                // если ходов не осталось
+                if (this._dice.RandomCubeValues.Count == 0)
+                {
+                    // ходит другой игрок
+                    this._whiteFiguresIsWalking = !this._whiteFiguresIsWalking;
+                    // перебрасываем кубики
+                    this._dice.UpdateDice();
+                }
+                
                 return true;
             }
 

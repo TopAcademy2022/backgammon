@@ -129,8 +129,9 @@ namespace BackGammon
 
         public void PrintPossibleMoves(GameFigure gameFigure)
         {
-            uint[] cubes = this._gameField.GetRandomCubes();
+            List<uint> cubes = this._gameField.GetRandomCubes();
             MessageBox.Show($"Куб1 = {cubes[0]}, куб2 = {cubes[1]}");
+
             if (this._gameField.CheckFigureWasMovement(this.GetFigurePosition(gameFigure)))
             {
                 this._currentSelectedFigure = gameFigure;
@@ -138,6 +139,7 @@ namespace BackGammon
             }
             else
             {
+                // если после отрисовки нажали на чужую фигуру
                 this.RemoveAllPosiblePosition();
             }
         }
