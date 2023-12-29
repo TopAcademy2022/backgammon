@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Documents;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Windows.Input;
 
 namespace BackGammon
 {
