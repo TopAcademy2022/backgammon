@@ -137,25 +137,71 @@ namespace BackGammon
 
         /*!
         *  @brief Prohibition On Moving Figure After Returning Home.
-        *  @param  startFigureRow - A variable representing the position of a piece on the board.
-        *  @param  figurePositionColls - A variable representing the position of a shape along a line.
-        *  @param  cubeValue - Variable representing the value of the die
-        *  @return true - Access blocked, false - Access is allowed
+        *  @param[in]  positionOfFigureOnField - A variable representing the position of a piece on the board.
+        *  @param[in]  figurePositionColls - A variable representing the position of a shape along a line.
+        *  @param[in]  cubeValue - Variable representing the value of the die
+        *  @return true - Access is allowed, false - Access blocked
         */
-        private bool ProhibitionOnMovingFigureAfterReturningHome(uint startFigureRow, uint figurePositionColls, uint cubeValue)
+        private bool СheckingToSeeIfWeCanGoIfWeGetHome (uint positionOfFigureOnField, uint figurePositionColls, uint cubeValue)
         {
+            uint tempNumberOfMoves = 0;
+
             if(this._whiteFiguresIsWalking)
             {
-                if(startFigureRow == 23 && figurePositionColls + cubeValue > _COUNT_COLLS - 1)
+                if( positionOfFigureOnField == 0)
                 {
-                    return true;
+                    for(int i = (int)figurePositionColls; i > 0; i--)
+                    {
+                        tempNumberOfMoves++;
+                    }
+
+                    tempNumberOfMoves += _COUNT_COLLS;
+
+                    if(tempNumberOfMoves >= cubeValue)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    for(uint i = figurePositionColls; i < _COUNT_COLLS - 1; i++)
+                    {
+                        tempNumberOfMoves++;
+                    }
+
+                    if(tempNumberOfMoves >= cubeValue)
+                    {
+                        return true;
+                    }
                 }
             }
             else
             {
-                if(startFigureRow == 0 && (int)figurePositionColls - cubeValue < 0)
+                if(positionOfFigureOnField == 23)
                 {
-                    return true;
+                    for(uint i = figurePositionColls; i < _COUNT_COLLS - 1; i++)
+                    {
+                        tempNumberOfMoves++;
+                    }
+
+                    tempNumberOfMoves += _COUNT_COLLS;
+
+                    if(tempNumberOfMoves >= cubeValue)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    for(int i = ( int ) figurePositionColls; i >= 0; i--)
+                    {
+                        tempNumberOfMoves++;
+                    }
+
+                    if(tempNumberOfMoves >= cubeValue)
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -172,7 +218,7 @@ namespace BackGammon
             uint startFigureRow = (startFigureIsUp == true) ? (uint)0 : 23;
             // итоговая позиция куда ставить фигуру
             uint[] figureNewFirstPosition = null;
-            if(!ProhibitionOnMovingFigureAfterReturningHome(startFigureRow, figurePosition[1], cubeValue))
+            if(СheckingToSeeIfWeCanGoIfWeGetHome( startFigureRow, figurePosition[1], cubeValue))
             {
                 // Двигаемся по столбцам влево или вправо (если сверху, то влево. если снизу, то вправо)
                 if(startFigureIsUp)
